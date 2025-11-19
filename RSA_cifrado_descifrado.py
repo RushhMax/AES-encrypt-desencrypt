@@ -57,7 +57,6 @@ scrollbar.pack(side="right", fill="y")
 
 main_canvas.configure(yscrollcommand=scrollbar.set)
 
-# Frame interno scrolleable
 scroll_frame = ctk.CTkFrame(main_canvas)
 scroll_window = main_canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
 
@@ -66,12 +65,10 @@ def update_scroll(event=None):
 
 scroll_frame.bind("<Configure>", update_scroll)
 
-# Permitir scroll con la rueda del mouse
 def mouse_scroll(event):
     main_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
 root.bind_all("<MouseWheel>", mouse_scroll)
-
 
 
 # ============================================================
@@ -103,6 +100,10 @@ label_r.pack(pady=5)
 ctk.CTkLabel(frame1, text="Candidates (1 mod r):").pack()
 cand_list = ctk.CTkTextbox(frame1, height=90)
 cand_list.pack(pady=5, padx=10)
+
+# ---- VARIABLES GLOBALES ----
+N = None
+r = None
 
 def step1_compute():
     global p, q, N, r
@@ -158,7 +159,6 @@ def step2_factor():
 ctk.CTkButton(frame2, text="Factorize K", command=step2_factor).pack(pady=10)
 
 
-
 # ============================================================
 #                   STEP 3
 # ============================================================
@@ -183,6 +183,12 @@ label_check = ctk.CTkLabel(frame3, text="Consistency check:")
 label_check.pack(pady=8)
 
 def step3_check():
+    global N, r
+
+    if N is None or r is None:
+        messagebox.showerror("Error", "Primero calcula N y r en el Step 1.")
+        return
+
     try:
         e = int(entry_e.get())
         d = int(entry_d.get())
@@ -199,7 +205,6 @@ def step3_check():
         f"e*d mod r = {(e*d) % r}\n"
     )
 
-    import math
     if math.gcd(e, r) == 1 and math.gcd(d, r) == 1 and (e * d) % r == 1:
         message += "\n✔ e*d mod r = 1\n✔ e and r are relatively prime\n✔ d and r are relatively prime"
     else:
@@ -208,7 +213,6 @@ def step3_check():
     label_check.configure(text=message)
 
 ctk.CTkButton(frame3, text="Check e and d", command=step3_check).pack(pady=10)
-
 
 
 # ============================================================
@@ -230,29 +234,68 @@ entry_msg.grid(row=0, column=1, padx=5)
 label_cipher = ctk.CTkLabel(frame4, text="Encrypted = ")
 label_cipher.pack(pady=5)
 
+ctk.CTkLabel(container4, text="Ciphertext (manual): ").grid(row=1, column=0, padx=5, pady=5)
+entry_cipher_manual = ctk.CTkEntry(container4, width=120)
+entry_cipher_manual.grid(row=1, column=1, padx=5, pady=5)
+
 label_decrypted = ctk.CTkLabel(frame4, text="Decrypted = ")
 label_decrypted.pack(pady=5)
 
+
 def step4_process():
+    global N
+
+    if N is None:
+        messagebox.showerror("Error", "Primero calcula N en Step 1.")
+        return
+
     try:
         e = int(entry_e.get())
         d = int(entry_d.get())
-        message = int(entry_msg.get())
+        message_value = int(entry_msg.get())
     except:
         messagebox.showerror("Error", "Valores incorrectos.")
         return
 
-    if message >= N:
+    if message_value >= N:
         messagebox.showerror("Error", "El mensaje debe ser menor que N.")
         return
 
-    cipher = pow(message, e, N)
+    cipher = pow(message_value, e, N)
     decrypted = pow(cipher, d, N)
 
     label_cipher.configure(text=f"Encrypted = {cipher}")
     label_decrypted.configure(text=f"Decrypted = {decrypted}")
 
-ctk.CTkButton(frame4, text="Encrypt / Decrypt", command=step4_process).pack(pady=10)
 
+def decrypt_only():
+    global N
+
+    if N is None:
+        messagebox.showerror("Error", "Primero calcula N en Step 1.")
+        return
+
+    try:
+        d = int(entry_d.get())
+        cipher = int(entry_cipher_manual.get())
+    except:
+        messagebox.showerror("Error", "Cipher inválido o d incorrecto.")
+        return
+
+    if cipher >= N:
+        messagebox.showerror("Error", "El ciphertext debe ser menor que N.")
+        return
+
+    decrypted = pow(cipher, d, N)
+    label_decrypted.configure(text=f"Decrypted = {decrypted}")
+
+
+ctk.CTkButton(frame4, text="Encrypt / Decrypt", command=step4_process).pack(pady=10)
+ctk.CTkButton(frame4, text="Decrypt Only", command=decrypt_only).pack(pady=10)
+
+
+# ============================================================
+#                     RUN APP
+# ============================================================
 
 root.mainloop()

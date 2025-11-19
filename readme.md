@@ -1,102 +1,131 @@
 
-# AES-128 Cifrador/Descifrador con Tkinter
+# **RSA Calculator – GUI (CustomTkinter)**
 
-## Descripción
-Este proyecto implementa **AES-128 desde cero** en Python, incluyendo cifrado y descifrado de bloques de 16 bytes. Además, cuenta con una **interfaz gráfica amigable** usando Tkinter, lo que permite cifrar y descifrar texto de manera interactiva.
-
-El algoritmo implementa:
-
-- Cifrado y descifrado de bloques de 16 bytes.
-- Modo **ECB** (Electronic Codebook) para múltiples bloques.
-- **Padding PKCS7** para manejar textos de longitud variable.
-- Transformaciones AES completas: `SubBytes`, `ShiftRows`, `MixColumns`, `AddRoundKey`.
-- Expansión de clave (**Key Schedule**) para generar las 11 claves de ronda.
+Aplicación educativa y visual para entender paso a paso el funcionamiento del algoritmo RSA.
+Permite calcular (N), (\phi(N)), generar candidatos, factorizar valores, verificar parámetros (e) y (d), cifrar, y *descifrar de forma independiente*.
 
 ---
 
-## Funcionalidades
+## 📌 **Características principales**
 
-- **Cifrar texto**: ingresa un texto y una clave de 16 caracteres; el resultado se muestra en hexadecimal.
-- **Descifrar texto**: ingresa el texto cifrado en hexadecimal y la clave para recuperar el texto original.
-- **Limpiar campos**: limpia la entrada y el área de resultados.
-- **Ejemplo de prueba**: carga un texto y clave de ejemplo para probar rápidamente.
+### ✔️ **Interfaz Moderna (CustomTkinter)**
 
----
+Diseño oscuro, limpio y con scroll vertical para manejar una interfaz larga.
 
-## Requisitos
+### ✔️ **Cálculo paso a paso del RSA**
 
-- Python 3.7 o superior
-- Librerías estándar de Python:
-  - `tkinter`
-  - `ttk`
-  - `scrolledtext`
-  - `messagebox`
+1. **Step 1:**
 
-No se requieren librerías externas.
+   * Ingresar (p) y (q)
+   * Calcular (N = pq)
+   * Calcular (\phi(N) = (p-1)(q-1))
+   * Mostrar candidatos del tipo (K = 1 \mod r)
 
----
+2. **Step 2:**
 
-## Uso
+   * Ingresar un valor K
+   * Factorizarlo automáticamente
 
-1. Clonar o descargar el repositorio.
-2. Ejecutar el archivo principal
-3. Interactuar con la interfaz:
+3. **Step 3:**
 
-* Ingresar texto y clave para cifrar o descifrar.
-* Hacer clic en los botones correspondientes: **Cifrar**, **Descifrar**, **Limpiar**, o **Probar Ejemplo**.
-* Ver resultados en el área de texto inferior.
+   * Ingresar valores personalizados de **e** y **d**
+   * Verificar condiciones:
 
----
+     * (gcd(e, r) = 1)
+     * (gcd(d, r) = 1)
+     * (e \cdot d \equiv 1 \mod r)
 
-## Ejemplo de flujo
+4. **Step 4:**
 
-### Cifrar
-
-* **Texto:** Hola desde la EPCC - Seguridad Informática
-* **Clave:** clave-secreta-16
-* **Resultado (hex):** ...
-
-### Descifrar
-
-* **Texto cifrado:** ... (hexadecimal)
-* **Clave:** clave-secreta-16
-* **Resultado:** Hola desde la EPCC - Seguridad Informática
+   * Cifrar un mensaje numérico con (e)
+   * Descifrar con (d)
+   * **Descifrado independiente:** permitir ingresar un ciphertext manualmente
 
 ---
 
-## Estructura del código
+## 📦 **Requisitos**
 
-* **aes_gui.py**: archivo principal con la implementación de AES-128 y la interfaz Tkinter.
+### Python 3.8+
 
-**Funciones principales AES:**
+Instalar dependencias:
 
-* `encriptar_bloque()`, `desencriptar_bloque()`
-* `pad_text()`, `unpad_text()`
-* `expansion_clave()`
-* Transformaciones: `sub_bytes()`, `shift_rows()`, `mezclar_columnas()`, `add_round_key()`
-
-**Clase AESApp:**
-
-* Define la interfaz y los botones interactivos.
-* Métodos: `cifrar()`, `descifrar()`, `limpiar()`, `probar_ejemplo()`
-
----
-
-## Notas importantes
-
-* La clave debe tener **exactamente 16 caracteres**.
-* El texto cifrado se muestra en **formato hexadecimal**.
-* Actualmente el proyecto implementa **modo ECB**, no recomendado para grandes cantidades de datos sensibles. Para aplicaciones reales, se recomienda **AES con CBC o GCM**.
-
----
-
-## Licencia
-
-Este proyecto es de **código abierto** y puede ser utilizado con fines educativos y de aprendizaje.
-
+```bash
+pip install customtkinter
 ```
 
-Si quieres, puedo hacer otra versión con **capturas de pantalla simuladas y tablas de ejemplo de cifrado/descifrado**, que queda muy profesional para GitHub.  
+CustomTkinter funciona en Windows, Linux y macOS.
 
-¿Quieres que haga esa versión también?
+---
+
+## ▶️ **Cómo ejecutar**
+
+Ejecuta directamente el archivo:
+
+```bash
+python RSA_cifrado_descifrado.py
 ```
+
+La ventana abrirá automáticamente la interfaz.
+
+---
+
+## 🧩 **Estructura del programa**
+
+### 🔹 **Funciones RSA**
+
+* `modinv(a, m)` — calcula inverso modular
+* `factorize(n)` — factorización simple por prueba de divisores
+* Cifrado/descifrado con `pow(m, e, N)`
+
+### 🔹 **Interfaz**
+
+* Construida con **CustomTkinter**
+* Scroll vertical para toda la app
+* Organizada en 4 módulos:
+
+  * Step 1: Parámetros base
+  * Step 2: Factorización
+  * Step 3: Elección y verificación
+  * Step 4: Cifrar / Descifrar
+
+
+## 🧪 **Modo de uso**
+
+### 1️⃣ **Calcular N y r**
+
+1. Ingresa **p** y **q** (números primos)
+2. Presiona **Compute N and r**
+
+### 2️⃣ **Factorizar un K**
+
+Opcional pero útil para ejercicios educativos.
+
+### 3️⃣ **Evaluar e y d**
+
+Escribe valores e/d y verifica:
+
+→ Si todo está correcto, la interfaz muestra checks ✔️
+→ Si hay error, muestra alertas ❌
+
+### 4️⃣ **Cifrado y descifrado**
+
+* Ingresa un mensaje numérico < N
+* Presiona **Encrypt / Decrypt**
+
+### 5️⃣ **Descifrado independiente**
+
+Perfecto para pruebas externas.
+
+* Ingresa un ciphertext manualmente
+* Haz clic en **Decrypt Only**
+
+---
+
+## 📚 **Propósito del proyecto**
+
+Esta herramienta está diseñada para:
+
+* Estudiantes de criptografía
+* Profesores que necesitan demostraciones visuales
+* Cursos de seguridad informática
+* Experimentación con RSA desde cero
